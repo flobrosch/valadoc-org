@@ -1,5 +1,5 @@
 
-VALAC_VERSION = 0.26
+VALAC_VERSION = 0.30
 PREFIX = "stable"
 
 
@@ -100,4 +100,12 @@ build-docs:
         --download-images \
         --skip-existing \
         --all
+
+
+#
+# Run a local webserver serving valadoc.org
+#
+
+serve: default build-docs
+	-php -S localhost:7777 -t ./valadoc.org
 
