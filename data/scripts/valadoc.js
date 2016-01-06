@@ -10,10 +10,10 @@ function toggle_box (self, id) {
 
     if (element.style.display == 'block') {
 	element.style.display = 'none';
-	self.src = '/coll_open.png';
+	self.src = '/images/coll_open.png';
     } else {
 	element.style.display = 'block';
-	self.src = '/coll_close.png';
+	self.src = '/images/coll_close.png';
     }
 }
 
@@ -60,14 +60,8 @@ var navi_data = null;
 var content_data = null;
 var RESULTS_BULK = 20;
 
-function close_spinner () {
-    $("body > img[src='/spinner.gif']").remove();
-}
-
 function check_loaded (path) {
     if (navi_data !== null && content_data !== null) {
-	close_spinner ();
-
 	$("#navigation-content").html (navi_data);
 	var new_navi_content = $("#navigation-content").text ();
 	if (last_navi_content != new_navi_content) {
@@ -115,16 +109,14 @@ function abort_loading () {
 
 function load_content (href) {
     if (href.substr (-5) == '.html') {
-	// decodeURIComponent -> firefox does not show my ndash otherwise ...
-	document.title = href.substr (0, href.length - 5).split ('/').reverse ().join (' ' + decodeURIComponent('%E2%80%93') + ' ');
+	     document.title = href.substr (0, href.length - 5).split ('/').reverse ().join (' ' + decodeURIComponent('%E2%80%93') + ' ');
     } else if (href.substr (-10) == '/index.htm') {
-	document.title = href.substr (0, href.length - 10);
+	     document.title = href.substr (0, href.length - 10);
     } else {
-	document.title = 'Valadoc - Stays crunchy. Even in milk.';
+	     document.title = 'Valadoc - Stays crunchy. Even in milk.';
     }
 
     abort_loading ();
-    $("#content-wrapper").spinner ({position:'center',width:16,height:16})
     replace_navigation (href + ".navi.tpl");
     replace_content (href + ".content.tpl");
 }
@@ -184,7 +176,6 @@ $(document).ready (function () {
 	}
 	abort_loading ();
 	close_tooltips ();
-	close_spinner ();
 	var page = window.location.hash.split('=')[1];
 	$(this).html ("Error "+xhr.status+": <strong>"+xhr.statusText+"</strong>. When loading <em>"+page+"</em>.<br>"+
 		      "<a href='/#!wiki=index'>Click here to go to the homepage</a>");
@@ -238,7 +229,7 @@ $(document).ready (function () {
 	    return false;
 	}
     })
-    
+
     $(window).hashchange (function(){
 	if (location.hash) {
 	    load_link (hash_to_url (window.location.hash), window.location.hostname);
@@ -379,7 +370,6 @@ $(document).ready (function () {
 	    }
 	    var numresults = sr.children().length;
 	    var curpkg = hash_to_url(window.location.hash).split("/")[0];
-	    sr.append ("<li class='search-more'><center><img src='/spinner.gif'></center></li>");
 	    scrollxhr = $.post ("/search.php", { query: value, curpkg: curpkg, offset: numresults }, function (data) {
 		scrollxhr = null;
 		$(".search-more").remove ();
