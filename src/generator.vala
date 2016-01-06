@@ -233,8 +233,8 @@ public class Valadoc.IndexGenerator : Valadoc.ValadocOrgDoclet {
 
 	private class Section : Node {
 		public string name;
-		public Collection<Package> packages = new ArrayList<Package> (); 
-		public Collection<Section> sections = new ArrayList<Section> (); 
+		public Collection<Package> packages = new ArrayList<Package> ();
+		public Collection<Section> sections = new ArrayList<Section> ();
 
 		public Section (string name) {
 			this.name = name;
@@ -441,8 +441,8 @@ public class Valadoc.IndexGenerator : Valadoc.ValadocOrgDoclet {
 
 		while ((dir = dirptr.read_name ()) != null) {
 			string dir_path = Path.build_path (Path.DIR_SEPARATOR_S, path, dir);
-			if (dir == ".sphinx") {
-				continue ;
+			if (dir == ".sphinx" || dir == "scripts" || dir == "styles" || dir == "images" || dir == "templates") {
+				continue;
 			}
 
 			if (FileUtils.test (dir_path, FileTest.IS_DIR)) {
@@ -473,7 +473,7 @@ public class Valadoc.IndexGenerator : Valadoc.ValadocOrgDoclet {
 		ArrayList<Package> packages = get_sorted_package_list ();
 		foreach (Package pkg in packages) {
 			if (pkg is ExternalPackage) {
-				writer.start_tag ("li", {"class", "package"}).start_tag ("a", {"href", pkg.online_link}).text (pkg.name).end_tag ("a").simple_tag ("img", {"src", "/external_link.png"}).end_tag ("li");
+				writer.start_tag ("li", {"class", "package"}).start_tag ("a", {"href", pkg.online_link}).text (pkg.name).end_tag ("a").simple_tag ("img", {"src", "/images/external_link.png"}).end_tag ("li");
 			} else {
 				writer.start_tag ("li", {"class", "package"}).start_tag ("a", {"href", pkg.online_link}).text (pkg.name).end_tag ("a").end_tag ("li");
 			}
@@ -566,7 +566,7 @@ public class Valadoc.IndexGenerator : Valadoc.ValadocOrgDoclet {
 			//string maintainers = pkg.maintainers ?? "-";
 			writer.start_tag ("tr");
 			writer.start_tag ("td").end_tag ("td"); // space
-			writer.start_tag ("td").simple_tag ("img", {"src", "/package.png"}).end_tag ("td");
+			writer.start_tag ("td").simple_tag ("img", {"src", "/images/package.png"}).end_tag ("td");
 
 			writer.start_tag ("td");
 			if (pkg.is_deprecated) {
@@ -576,7 +576,7 @@ public class Valadoc.IndexGenerator : Valadoc.ValadocOrgDoclet {
 			}
 
 			if (pkg is ExternalPackage) {
-				writer.simple_tag ("img", {"src", "/external_link.png"});
+				writer.simple_tag ("img", {"src", "/images/external_link.png"});
 			}
 			writer.end_tag ("td");
 
@@ -601,7 +601,7 @@ public class Valadoc.IndexGenerator : Valadoc.ValadocOrgDoclet {
 				writer.text ("-");
 			}
 			writer.end_tag ("td");
-			
+
 
 			string? install_link = pkg.get_catalog_file ();
 			if (install_link != null) {
@@ -673,7 +673,7 @@ public class Valadoc.IndexGenerator : Valadoc.ValadocOrgDoclet {
 		if (is_devhelp == false) {
 			string? catalog = pkg.get_catalog_file ();
 			if (catalog != null) {
-				stream.printf (" * ''[[%s|Install this package]]'' (PackageKit required)\n", catalog);			
+				stream.printf (" * ''[[%s|Install this package]]'' (PackageKit required)\n", catalog);
 			}
 			if (pkg.devhelp_link != null) {
 				stream.printf (" * ''[[%s|Devhelp-Package download]]''\n", pkg.devhelp_link);
@@ -940,7 +940,7 @@ public class Valadoc.IndexGenerator : Valadoc.ValadocOrgDoclet {
 		bool has_examples = false;
 		string example_path = "examples/%s/%s.valadoc.examples".printf (pkg.name, pkg.name);
 		if (FileUtils.test (example_path, FileTest.IS_REGULAR)) {
-			string output = "examples/%s-examples.valadoc".printf (pkg.name); 
+			string output = "examples/%s-examples.valadoc".printf (pkg.name);
 			stdout.printf ("  select example.valadoc: %s\n", output);
 			FileUtils.remove (output);
 
@@ -949,7 +949,7 @@ public class Valadoc.IndexGenerator : Valadoc.ValadocOrgDoclet {
 				string? standard_output = null;
 				string? standard_error = null;
 
-				Process.spawn_command_line_sync ("./valadoc-example-gen \"%s\" \"%s\" \"%s\"".printf (example_path, output, "documentation/%s/wiki".printf (pkg.name)), out standard_output, out standard_error, out exit_status); 
+				Process.spawn_command_line_sync ("./valadoc-example-gen \"%s\" \"%s\" \"%s\"".printf (example_path, output, "documentation/%s/wiki".printf (pkg.name)), out standard_output, out standard_error, out exit_status);
 				if (exit_status != 0) {
 					FileStream log = FileStream.open ("LOG", "w");
 					log.printf ("%s\n", builder.str);
@@ -990,7 +990,7 @@ public class Valadoc.IndexGenerator : Valadoc.ValadocOrgDoclet {
 			string? standard_error = null;
 
 			stdout.puts ("  run valadoc ...\n");
-			Process.spawn_command_line_sync (builder.str, out standard_output, out standard_error, out exit_status); 
+			Process.spawn_command_line_sync (builder.str, out standard_output, out standard_error, out exit_status);
 
 			FileStream log = FileStream.open ("LOG", "w");
 			log.printf ("%s\n", builder.str);
@@ -1010,14 +1010,14 @@ public class Valadoc.IndexGenerator : Valadoc.ValadocOrgDoclet {
 
 			Process.spawn_command_line_sync ("rm -r -f %s".printf (Path.build_path (Path.DIR_SEPARATOR_S, output_directory, pkg.name)));
 			Process.spawn_command_line_sync ("mv LOG tmp/%s/%s".printf (pkg.name, pkg.name));
-			Process.spawn_command_line_sync ("mv tmp/%s/%s \"%s\"".printf (pkg.name, pkg.name, output_directory)); 
+			Process.spawn_command_line_sync ("mv tmp/%s/%s \"%s\"".printf (pkg.name, pkg.name, output_directory));
 		} catch (SpawnError e) {
 			stdout.printf ("ERROR: Can't generate documentation for %s. See LOG for details.\n", pkg.name);
 			throw e;
 		} finally {
 			if (delete_wiki_path) {
 				FileUtils.unlink (wiki_path);
-			}		
+			}
 		}
 	}
 
@@ -1150,7 +1150,7 @@ public class Valadoc.IndexGenerator : Valadoc.ValadocOrgDoclet {
 		images.foreach ((entry) => {
 			if (first_entry == false) {
 				stream.puts ("\n\n");
-			}			
+			}
 
 			stream.puts ("/**\n");
 			stream.printf (" * {{../documentation/%s/gallery-images/%s|%s}}\n", pkg.name, entry.value, entry.key);
@@ -1218,13 +1218,24 @@ public class Valadoc.IndexGenerator : Valadoc.ValadocOrgDoclet {
 		}
 	}
 
-	private void copy_data () throws FileError {
-		Dir dir = Dir.open ("data");
+	private static void copy_dir (string path, string output) throws Error {
+		Dir dir = Dir.open (path);
 		for (string? file = dir.read_name (); file != null; file = dir.read_name ()) {
-			string src_file_path = Path.build_filename ("data", file);
-			string dest_file_path = Path.build_filename (output_directory, file);
-			Valadoc.copy_file (src_file_path, dest_file_path);
+			string src_file_path = Path.build_filename (path, file);
+			string dest_file_path = Path.build_filename (output, file);
+			if (FileUtils.test (src_file_path, FileTest.IS_DIR)) {
+				if (!FileUtils.test (dest_file_path, FileTest.EXISTS)) { // mkdir if necessary
+					File.new_for_path (dest_file_path).make_directory (null);
+				}
+				copy_dir (src_file_path, dest_file_path); // copy directories recursively
+			} else {
+				Valadoc.copy_file (src_file_path, dest_file_path);
+			}
 		}
+	}
+
+	private void copy_data () throws Error {
+		copy_dir ("data", output_directory);
 	}
 
 	public static int main (string[] args) {
