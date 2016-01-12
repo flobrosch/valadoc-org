@@ -1,0 +1,4 @@
+[PackageKit Catalog]
+
+InstallPackages(fedora)=gnome-online-accounts-devel
+InstallPackages(debian)=libgoa-1.0-dev
