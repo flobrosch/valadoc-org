@@ -138,9 +138,10 @@ nav .subtitle {
     display: inline-block;
     overflow-y: auto;
     position: fixed;
-    top: 48;
+    top: 48px;
+    bottom: 0;
+    left: 0;
     width: 240px;
-    height: 100%;
 }
 
 #sidebar a {
