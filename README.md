@@ -1,3 +1,5 @@
+# The valadoc.org repo has moved [here](https://github.com/valadoc/valadoc-org)
+
 Valadoc-org
 ===========
 
