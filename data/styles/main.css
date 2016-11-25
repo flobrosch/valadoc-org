@@ -135,12 +135,12 @@ nav .subtitle {
 #sidebar {
     background-color: #fcfcfc;
     border-right: 1px solid #dedede;
+    bottom: 0;
     display: inline-block;
     overflow-y: auto;
     position: fixed;
-    top: 48;
+    top: 48px;
     width: 240px;
-    height: 100%;
 }
 
 #sidebar a {
@@ -610,7 +610,7 @@ code {
     margin: auto;
     width: 90%;
     margin-top: 20px;
-    font-weight: bold;  
+    font-weight: bold;
 }
 
 .box .content {
